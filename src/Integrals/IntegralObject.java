@@ -28,24 +28,24 @@ public class IntegralObject implements Drawable{
     
     @Override
     public void draw(Graphics g, GraphCanvas GraphCanvas) {
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.setColor(positivecolor);
-        
-        AffineTransform transform = new AffineTransform();
-        transform.translate(GraphCanvas.getxOrigoPos(), GraphCanvas.getyOrigoPos());
-        transform.scale(GraphCanvas.getxScale(), -GraphCanvas.getyScale());
-                
-        g2d.transform(transform);
-        g2d.fill(new Rectangle(0, 0, 10,10));
-        g2d.fill(new Rectangle(10, 10, 10,10));
-        g2d.fill(new Rectangle(-10, -10, 10,10));
-        
-        try {
-            g2d.transform(transform.createInverse()); 
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(IntegralObject.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        Graphics2D g2d = (Graphics2D)g;
+//        g2d.setColor(positivecolor);
+//        
+//        AffineTransform transform = new AffineTransform();
+//        transform.translate(GraphCanvas.getxOrigoPos(), GraphCanvas.getyOrigoPos());
+//        transform.scale(GraphCanvas.getxScale(), -GraphCanvas.getyScale());
+//                
+//        g2d.transform(transform);
+//        g2d.fill(new Rectangle(0, 0, 10,10));
+//        g2d.fill(new Rectangle(10, 10, 10,10));
+//        g2d.fill(new Rectangle(-10, -10, 10,10));
+//        
+//        try {
+//            g2d.transform(transform.createInverse()); 
+//        } catch (NoninvertibleTransformException ex) {
+//            Logger.getLogger(IntegralObject.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

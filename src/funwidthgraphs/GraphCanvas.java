@@ -5,12 +5,18 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 
 public class GraphCanvas extends javax.swing.JPanel {
 
     Color backgroundcolor;
+
+    AffineTransform transform;
 
     double xScale;
     double yScale;
@@ -21,14 +27,14 @@ public class GraphCanvas extends javax.swing.JPanel {
     int xOrigoOffset = 0;
     int yOrigoOffset = 0;
 
-    JLabel XY;
-
     ArrayList<Drawable> drawobjects;
 
     double mouseScrollSpeed;
-    
+
     int mousePosX = -1;
     int mousePosY = -1;
+    
+    JLabel XY;
 
     public GraphCanvas() {
         initComponents();
@@ -37,8 +43,13 @@ public class GraphCanvas extends javax.swing.JPanel {
         mouseScrollSpeed = 1.1;
         drawobjects = new ArrayList<>();
 
+        transform = new AffineTransform();
         xScale = 20; //How many pixels there is between each number on the number line
         yScale = 20;
+
+        
+        transform.translate(getWidth() / 2, getHeight() / 2);
+        transform.scale(xScale, -yScale);
 
         MouseAdapter mouse = new MouseAdapter() {
             @Override
@@ -49,8 +60,8 @@ public class GraphCanvas extends javax.swing.JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                mousePosX = -1;
-                mousePosY = -1;
+//                mousePosX = -1;
+//                mousePosY = -1;
             }
 
             @Override
@@ -115,6 +126,26 @@ public class GraphCanvas extends javax.swing.JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(new Color(0, 255, 0,80));
+        g2d.fill(new Rectangle(0, 0, 100,100));
+//        AffineTransform transform = new AffineTransform();
+//        transform.translate(getxOrigoPos(), getyOrigoPos());
+//        transform.scale(getxScale(), -getyScale());
+//                
+//        g2d.transform(transform);
+//        g2d.setColor(new Color(0, 255, 0,80));
+//        g2d.fill(new Rectangle(0, 0, 10,10));
+//        g2d.fill(new Rectangle(10, 10, 10,10));
+//        g2d.fill(new Rectangle(-10, -10, 10,10));
+//        try { 
+//            g2d.transform(transform.createInverse());
+//        } catch (NoninvertibleTransformException ex) {
+//            Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
 
         xOrigoPos = this.getWidth() / 2 + xOrigoOffset; //Pixel position of origo, can be negative
         yOrigoPos = this.getHeight() / 2 + yOrigoOffset;
@@ -251,12 +282,12 @@ public class GraphCanvas extends javax.swing.JPanel {
     public void setDrawobject(int i, Drawable drawobject) {
         drawobjects.set(i, drawobject);
     }
-    
-    public void removeDrawobject(int i){
+
+    public void removeDrawobject(int i) {
         drawobjects.remove(i);
     }
-    
-    public int getDrawobjectsSize(){
+
+    public int getDrawobjectsSize() {
         return drawobjects.size();
     }
 

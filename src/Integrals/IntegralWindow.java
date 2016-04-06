@@ -8,6 +8,7 @@ public class IntegralWindow extends javax.swing.JFrame {
 
     public IntegralWindow() {
         initComponents();
+//        graphCanvas1.initiateOrigo();
         graphCanvas1.addXY(XY);
 
         functions = new ArrayList<>();
@@ -15,7 +16,8 @@ public class IntegralWindow extends javax.swing.JFrame {
         functions.add(new FunctionObject("F(x) = Sin(x)", (x) -> Math.sin(x)));
         functions.add(new FunctionObject("F(x) = x^2", (x) -> Math.pow(x, 2)));
         functions.add(new FunctionObject("F(x) = x", (x) -> x));
-
+        functions.add(new FunctionObject("F(x) = Sin(x)*x", (x) -> Math.sin(x)*x));
+        
         functions.forEach((funcobject) -> jComboBox1.addItem(funcobject.getFunctext()));
         
         graphCanvas1.addDrawobject(new IntegralObject(null));

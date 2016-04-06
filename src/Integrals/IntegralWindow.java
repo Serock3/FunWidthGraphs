@@ -9,7 +9,7 @@ public class IntegralWindow extends javax.swing.JFrame {
     public IntegralWindow() {
         initComponents();
 //        graphCanvas1.initiateOrigo();
-        graphCanvas1.addXY(XY);
+//        graphCanvas1.addXY(XY);
 
         functions = new ArrayList<>();
 
@@ -39,7 +39,6 @@ public class IntegralWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         graphCanvas1 = new funwidthgraphs.GraphCanvas();
-        XY = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Graphs and Integrals");
@@ -116,23 +115,15 @@ public class IntegralWindow extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        XY.setText("X/Y");
-
         javax.swing.GroupLayout graphCanvas1Layout = new javax.swing.GroupLayout(graphCanvas1);
         graphCanvas1.setLayout(graphCanvas1Layout);
         graphCanvas1Layout.setHorizontalGroup(
             graphCanvas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, graphCanvas1Layout.createSequentialGroup()
-                .addContainerGap(715, Short.MAX_VALUE)
-                .addComponent(XY)
-                .addContainerGap())
+            .addGap(0, 741, Short.MAX_VALUE)
         );
         graphCanvas1Layout.setVerticalGroup(
             graphCanvas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, graphCanvas1Layout.createSequentialGroup()
-                .addContainerGap(502, Short.MAX_VALUE)
-                .addComponent(XY)
-                .addContainerGap())
+            .addGap(0, 527, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -207,7 +198,6 @@ public class IntegralWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel XY;
     private funwidthgraphs.GraphCanvas graphCanvas1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox<String> jComboBox1;

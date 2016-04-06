@@ -35,7 +35,7 @@ public class GraphCanvas extends javax.swing.JPanel {
     int mousePosX = -1;
     int mousePosY = -1;
 
-    JLabel XY;
+//    JLabel XY;
 
     public GraphCanvas() {
         initComponents();
@@ -82,7 +82,7 @@ public class GraphCanvas extends javax.swing.JPanel {
 //                if(XY != null)
                 mousePosX = e.getX();
                 mousePosY = e.getY();
-                setXYText(mousePosX, mousePosY);
+//                setXYText(mousePosX, mousePosY);
             }
 
             @Override
@@ -116,13 +116,13 @@ public class GraphCanvas extends javax.swing.JPanel {
         yOrigoOffset = (int) Math.round((yOrigoPos - mousePosY) * scalechange + mousePosY - getHeight() / 2);
     }
 
-    public void setXYText(int mousePosX, int mousePosY) {
-        XY.setText(getNumericX(mousePosX) + " " + getNumericY(mousePosY));
-    }
-
-    public void addXY(JLabel XY) {
-        this.XY = XY;
-    }
+//    public void setXYText(int mousePosX, int mousePosY) {
+//        XY.setText(getNumericX(mousePosX) + " " + getNumericY(mousePosY));
+//    }
+//
+//    public void addXY(JLabel XY) {
+//        this.XY = XY;
+//    }
 
     @Override
     public void paintComponent(Graphics g) {

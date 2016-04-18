@@ -35,7 +35,6 @@ public class IntegralObject implements DrawableAfterTransform {
 
     @Override
     public void draw(Graphics2D g2d, GraphCanvas GraphCanvas) {
-        g2d.setColor(positivecolor);
         rectangles.stream().forEach((rectangle) -> {
             g2d.setColor(rectangle.getArea() < 0 ? negativecolor : positivecolor);
             g2d.fill(rectangle.getRectangle());

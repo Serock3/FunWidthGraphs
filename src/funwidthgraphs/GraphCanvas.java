@@ -1,16 +1,27 @@
 package funwidthgraphs;
 
+import Drawables.Drawable;
+import Drawables.DrawableAfterTransform;
+import Drawables.DrawableBeforeTransform;
 import Integrals.function;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 
 public class GraphCanvas extends javax.swing.JPanel {
 
     Color backgroundcolor;
+
+    AffineTransform transform;
 
     double xScale;
     double yScale;
@@ -21,22 +32,25 @@ public class GraphCanvas extends javax.swing.JPanel {
     int xOrigoOffset = 0;
     int yOrigoOffset = 0;
 
-    JLabel XY;
-
-    ArrayList<Drawable> drawobjects;
+    ArrayList<DrawableBeforeTransform> drawbeforetransform;
+    ArrayList<DrawableAfterTransform> drawaftertransform;
 
     double mouseScrollSpeed;
-    
+
     int mousePosX = -1;
     int mousePosY = -1;
+
+    JLabel XY;
 
     public GraphCanvas() {
         initComponents();
 
         backgroundcolor = Color.white;
         mouseScrollSpeed = 1.1;
-        drawobjects = new ArrayList<>();
+        drawbeforetransform = new ArrayList<>();
+        drawaftertransform = new ArrayList<>();
 
+        transform = new AffineTransform();
         xScale = 20; //How many pixels there is between each number on the number line
         yScale = 20;
 
@@ -49,8 +63,8 @@ public class GraphCanvas extends javax.swing.JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                mousePosX = -1;
-                mousePosY = -1;
+//                mousePosX = -1;
+//                mousePosY = -1;
             }
 
             @Override
@@ -91,7 +105,11 @@ public class GraphCanvas extends javax.swing.JPanel {
         this.addMouseListener(mouse);
         this.addMouseMotionListener(mouse);
         this.addMouseWheelListener(mouse);
+    }
 
+    public void initiateOrigo() {
+        transform.translate(getWidth() / 2, getHeight() / 2);
+        transform.scale(xScale, -yScale);
     }
 
     private void zoom(double scalechange) {
@@ -121,10 +139,40 @@ public class GraphCanvas extends javax.swing.JPanel {
 
         drawBackground(g);
         drawGraph(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        drawbeforetransform.forEach((drawobject) -> drawobject.draw(g2d, this));
+        g2d.transform(getNewTransform());
+        drawaftertransform.forEach((drawobject) -> drawobject.draw(g2d, this));
 
-        drawobjects.forEach((drawobject) -> drawobject.draw(g, this));
+//        drawSomeStuff(g2d);
+//        drawAFunction(g2d);
+        try {
+            g2d.transform(getNewTransform().createInverse()); 
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    // TMP
+    private AffineTransform getNewTransform() {
+        AffineTransform tmp = new AffineTransform();
+        tmp.translate(xOrigoPos, yOrigoPos);
+        tmp.scale(xScale, -yScale);
+        return tmp;
+    }
+
+    private void drawSomeStuff(Graphics2D g2d) {
+        g2d.setColor(new Color(0, 255, 0, 80));
+        g2d.fill(new Rectangle(0, 0, 10, 10));
+        g2d.fill(new Rectangle(10, 10, 10, 10));
+        g2d.fill(new Rectangle(-10, -10, 10, 10));
+
+    }
+    // TMP
+    
     private void drawBackground(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -232,32 +280,68 @@ public class GraphCanvas extends javax.swing.JPanel {
         this.mouseScrollSpeed = mouseScrollSpeed;
     }
 
-    public ArrayList<Drawable> getDrawobjects() {
-        return drawobjects;
+    public AffineTransform getTransform() {
+        return transform;
     }
 
-    public void setDrawobjects(ArrayList<Drawable> drawobjects) {
-        this.drawobjects = drawobjects;
-    }
-
-    public Drawable getDrawobject(int i) {
-        return drawobjects.get(i);
+    public void setTransform(AffineTransform transform) {
+        this.transform = transform;
     }
 
     public void addDrawobject(Drawable drawobject) {
-        drawobjects.add(drawobject);
+        if (drawobject instanceof DrawableBeforeTransform) {
+            drawbeforetransform.add((DrawableBeforeTransform) drawobject);
+        } else {
+            drawaftertransform.add((DrawableAfterTransform) drawobject);
+        }
     }
 
-    public void setDrawobject(int i, Drawable drawobject) {
-        drawobjects.set(i, drawobject);
+    public int getDrawbeforetransformSize() {
+        return drawbeforetransform.size();
+    }
+
+    public int getDrawaftertransformSize() {
+        return drawaftertransform.size();
+    }
+
+    public void setDrawbeforetransformObject(int i, DrawableBeforeTransform drawobject) {
+        drawbeforetransform.set(i, drawobject);
+    }
+
+    public void setDrawaftertransformObject(int i, DrawableAfterTransform drawobject) {
+        drawaftertransform.set(i, drawobject);
+    }
+
+    public void addDrawbeforetransformObject(DrawableBeforeTransform drawobject) {
+        drawbeforetransform.add(drawobject);
+    }
+
+    public void addDrawaftertransformObject(DrawableAfterTransform drawobject) {
+        drawaftertransform.add(drawobject);
+    }
+
+    public ArrayList<DrawableBeforeTransform> getDrawbeforetransform() {
+        return drawbeforetransform;
+    }
+
+    public void setDrawbeforetransform(ArrayList<DrawableBeforeTransform> drawbeforetransform) {
+        this.drawbeforetransform = drawbeforetransform;
+    }
+
+    public ArrayList<DrawableAfterTransform> getDrawaftertransform() {
+        return drawaftertransform;
+    }
+
+    public void setDrawaftertransform(ArrayList<DrawableAfterTransform> drawaftertransform) {
+        this.drawaftertransform = drawaftertransform;
     }
     
-    public void removeDrawobject(int i){
-        drawobjects.remove(i);
+    public void removeDrawbeforetransformObject(DrawableBeforeTransform drawobject){
+        this.drawbeforetransform.remove(drawobject);
     }
     
-    public int getDrawobjectsSize(){
-        return drawobjects.size();
+    public void removeDrawaftertransformObject(DrawableAfterTransform drawobject){
+        this.drawaftertransform.remove(drawobject);
     }
 
     @SuppressWarnings("unchecked")

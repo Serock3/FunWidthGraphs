@@ -12,7 +12,7 @@ import Drawables.DrawableBeforeTransform;
 public class FunctionObject implements DrawableBeforeTransform {
 
     Color color = Color.black;
-    BasicStroke stroke = new BasicStroke(2);
+    BasicStroke stroke = new BasicStroke(1);
     function func;
     String functext;
 

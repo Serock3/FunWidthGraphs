@@ -30,7 +30,6 @@ public class IntegralObject implements DrawableAfterTransform {
     public IntegralObject(FunctionObject funcobject) {
         this.funcobject = funcobject;
         rectangles = new ArrayList<>();
-        rectangles.add(new IntegralRectangle(0, 0, 10, 10));
     }
 
     @Override
@@ -43,18 +42,21 @@ public class IntegralObject implements DrawableAfterTransform {
 
     public void update() {
         function func = funcobject.getFunc();
+
+        int M = 100; //constant
+        double diff = Math.abs(upperlimit - lowerlimit);
         
+        int amtofboxes = (int) Math.round(Math.pow((diff * M), (accuracy / 100.0)));
+        int positiveornegative = upperlimit - lowerlimit < 0 ? -1 : 1;
+
         value = 0;
         rectangles.clear();
-        for (double i = lowerlimit; i < upperlimit; i += 0.1) {
-            IntegralRectangle rectangle = new IntegralRectangle(i, 0, 0.1, func.F(i + 0.1));
+        for (int i = 0; i < amtofboxes; i++) {
+            IntegralRectangle rectangle = new IntegralRectangle(lowerlimit + i * positiveornegative * diff / amtofboxes, 0,
+                    diff * positiveornegative / amtofboxes, func.F(lowerlimit + (i+0.5) * positiveornegative * diff / amtofboxes));
             rectangles.add(rectangle);
             value += rectangle.getArea();
-        }
-
-//        rectangles.add(new Rectangle2D.Double(0, 0, 1,func.F(1)));
-//        rectangles.add(new Rectangle2D.Double(10, 10, 10,10));
-//        rectangles.add(new Rectangle2D.Double(-10, -10, 10,10));        
+        }       
     }
 
     public double getInegralValue() {

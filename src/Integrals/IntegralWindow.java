@@ -68,6 +68,7 @@ public class IntegralWindow extends javax.swing.JFrame {
             }
         });
 
+        jSlider1.setValue(80);
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSlider1StateChanged(evt);

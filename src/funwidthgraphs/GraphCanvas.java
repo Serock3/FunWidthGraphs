@@ -9,9 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +40,8 @@ public class GraphCanvas extends javax.swing.JPanel {
     int mousePosY = -1;
 
     JLabel XY;
+    
+    public boolean directionalzoom = true;
 
     public GraphCanvas() {
         initComponents();
@@ -85,9 +86,9 @@ public class GraphCanvas extends javax.swing.JPanel {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-//                if(XY != null)
                 mousePosX = e.getX();
                 mousePosY = e.getY();
+                if(XY != null)
                 setXYText(mousePosX, mousePosY);
             }
 
@@ -95,7 +96,8 @@ public class GraphCanvas extends javax.swing.JPanel {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double scalechange = Math.pow(mouseScrollSpeed, -e.getWheelRotation());
                 zoom(scalechange);
-                directionalZoom(scalechange);
+                if(directionalzoom)directionalZoom(scalechange);
+                else zoomTowardsMiddle(scalechange);
                 validate();
                 repaint();
             }
@@ -121,7 +123,12 @@ public class GraphCanvas extends javax.swing.JPanel {
         xOrigoOffset = (int) Math.round((xOrigoPos - mousePosX) * scalechange + mousePosX - getWidth() / 2);
         yOrigoOffset = (int) Math.round((yOrigoPos - mousePosY) * scalechange + mousePosY - getHeight() / 2);
     }
-
+    
+    private void zoomTowardsMiddle(double scalechange){
+        xOrigoOffset = (int) Math.round((xOrigoPos - getWidth() / 2) * scalechange);
+        yOrigoOffset = (int) Math.round((yOrigoPos - getHeight() / 2) * scalechange);
+    }
+    
     public void setXYText(int mousePosX, int mousePosY) {
         XY.setText(getNumericX(mousePosX) + " " + getNumericY(mousePosY));
     }
@@ -136,17 +143,19 @@ public class GraphCanvas extends javax.swing.JPanel {
 
         xOrigoPos = this.getWidth() / 2 + xOrigoOffset; //Pixel position of origo, can be negative
         yOrigoPos = this.getHeight() / 2 + yOrigoOffset;
-
+        transform = getNewTransform();
+        
         drawBackground(g);
         drawGraph(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        drawbeforetransform.forEach((drawobject) -> drawobject.draw(g2d, this));
-        g2d.transform(getNewTransform());
+        drawbeforetransform.forEach((drawobject) -> drawobject.draw(g2d, this));        
+        g2d.transform(transform);
         drawaftertransform.forEach((drawobject) -> drawobject.draw(g2d, this));
 
+        
 //        drawSomeStuff(g2d);
 //        drawAFunction(g2d);
         try {
@@ -198,6 +207,22 @@ public class GraphCanvas extends javax.swing.JPanel {
         for (int i = 0; i < getWidth(); i++) {
             g.drawLine(i, getPixelY(func.F(getNumericX(i))), i + 1, getPixelY(func.F(getNumericX(i + 1))));
         }
+    }
+    
+    public Point2D.Double numericToPixel(Point2D.Double point){
+        Point2D.Double dest = new Point2D.Double(0,0);
+        transform.transform(point,dest);
+        return dest;
+    }
+    
+    public Point2D.Double pixelToNumeric(Point2D.Double point){
+        Point2D.Double dest = new Point2D.Double(0,0);
+        try {
+            transform.inverseTransform(point,dest);
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dest;
     }
 
     public double getxScale() {

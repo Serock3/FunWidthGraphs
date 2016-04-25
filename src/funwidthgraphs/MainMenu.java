@@ -1,5 +1,6 @@
 package funwidthgraphs;
 
+import Fractals.FractalWindow;
 import Integrals.IntegralWindow;
 
 public class MainMenu extends javax.swing.JFrame {
@@ -36,6 +37,11 @@ public class MainMenu extends javax.swing.JFrame {
         jButton2.setText("Complex numbers");
 
         jButton3.setText("Fractals!");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -92,6 +98,11 @@ public class MainMenu extends javax.swing.JFrame {
         IntegralWindow.main(null);
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        FractalWindow.main(null);
+        dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

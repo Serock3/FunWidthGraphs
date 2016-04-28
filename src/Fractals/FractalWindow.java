@@ -40,7 +40,7 @@ public class FractalWindow extends javax.swing.JFrame {
         graphCanvas1Layout.setVerticalGroup(
             graphCanvas1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, graphCanvas1Layout.createSequentialGroup()
-                .addContainerGap(439, Short.MAX_VALUE)
+                .addContainerGap(454, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addContainerGap())
         );

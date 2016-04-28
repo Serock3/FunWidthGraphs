@@ -40,8 +40,10 @@ public class GraphCanvas extends javax.swing.JPanel {
     int mousePosY = -1;
 
     JLabel XY;
-    
+
     public boolean directionalzoom = true;
+
+    public Point2D.Double zoompoint = null;
 
     public GraphCanvas() {
         initComponents();
@@ -60,12 +62,23 @@ public class GraphCanvas extends javax.swing.JPanel {
             public void mousePressed(MouseEvent e) {
                 mousePosX = e.getX();
                 mousePosY = e.getY();
+
+                if (e.isShiftDown()) {
+                    zoompoint = pixelToNumeric(new Point2D.Double(mousePosX, mousePosY));
+                    centerOnPoint(zoompoint);
+                    System.out.println(zoompoint);
+                } else {
+                    zoompoint = null;
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
 //                mousePosX = -1;
 //                mousePosY = -1;
+                if (!e.isShiftDown()) {
+                    zoompoint = null;
+                }
             }
 
             @Override
@@ -88,16 +101,30 @@ public class GraphCanvas extends javax.swing.JPanel {
             public void mouseMoved(MouseEvent e) {
                 mousePosX = e.getX();
                 mousePosY = e.getY();
-                if(XY != null)
-                setXYText(mousePosX, mousePosY);
+                if (XY != null) {
+                    setXYText(mousePosX, mousePosY);
+                }
             }
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double scalechange = Math.pow(mouseScrollSpeed, -e.getWheelRotation());
                 zoom(scalechange);
-                if(directionalzoom)directionalZoom(scalechange);
-                else zoomTowardsMiddle(scalechange);
+
+                if (zoompoint != null) {
+                    centerOnPoint(zoompoint);
+                } else if (directionalzoom) {
+                    directionalZoom(scalechange);
+                } else {
+                    zoomTowardsMiddle(scalechange);
+                }
+                System.out.println(xScale);
+                
+                mousePosX = e.getX();
+                mousePosY = e.getY();
+                if (XY != null) {
+                    setXYText(mousePosX, mousePosY);
+                }
                 validate();
                 repaint();
             }
@@ -123,12 +150,19 @@ public class GraphCanvas extends javax.swing.JPanel {
         xOrigoOffset = (int) Math.round((xOrigoPos - mousePosX) * scalechange + mousePosX - getWidth() / 2);
         yOrigoOffset = (int) Math.round((yOrigoPos - mousePosY) * scalechange + mousePosY - getHeight() / 2);
     }
-    
-    private void zoomTowardsMiddle(double scalechange){
+
+    private void zoomTowardsMiddle(double scalechange) {
         xOrigoOffset = (int) Math.round((xOrigoPos - getWidth() / 2) * scalechange);
         yOrigoOffset = (int) Math.round((yOrigoPos - getHeight() / 2) * scalechange);
     }
-    
+
+    private void centerOnPoint(Point2D.Double zoompoint) {
+        xOrigoOffset = xOrigoPos - getPixelX(zoompoint.x);
+        yOrigoOffset = yOrigoPos - getPixelY(zoompoint.y);
+        validate();
+        repaint();
+    }
+
     public void setXYText(int mousePosX, int mousePosY) {
         XY.setText(getNumericX(mousePosX) + " " + getNumericY(mousePosY));
     }
@@ -144,22 +178,21 @@ public class GraphCanvas extends javax.swing.JPanel {
         xOrigoPos = this.getWidth() / 2 + xOrigoOffset; //Pixel position of origo, can be negative
         yOrigoPos = this.getHeight() / 2 + yOrigoOffset;
         transform = getNewTransform();
-        
+
         drawBackground(g);
         drawGraph(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        drawbeforetransform.forEach((drawobject) -> drawobject.draw(g2d, this));        
+        drawbeforetransform.forEach((drawobject) -> drawobject.draw(g2d, this));
         g2d.transform(transform);
         drawaftertransform.forEach((drawobject) -> drawobject.draw(g2d, this));
 
-        
 //        drawSomeStuff(g2d);
 //        drawAFunction(g2d);
         try {
-            g2d.transform(getNewTransform().createInverse()); 
+            g2d.transform(getNewTransform().createInverse());
         } catch (NoninvertibleTransformException ex) {
             Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -181,7 +214,7 @@ public class GraphCanvas extends javax.swing.JPanel {
 
     }
     // TMP
-    
+
     private void drawBackground(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -208,17 +241,17 @@ public class GraphCanvas extends javax.swing.JPanel {
             g.drawLine(i, getPixelY(func.F(getNumericX(i))), i + 1, getPixelY(func.F(getNumericX(i + 1))));
         }
     }
-    
-    public Point2D.Double numericToPixel(Point2D.Double point){
-        Point2D.Double dest = new Point2D.Double(0,0);
-        transform.transform(point,dest);
+
+    public Point2D.Double numericToPixel(Point2D.Double point) {
+        Point2D.Double dest = new Point2D.Double(0, 0);
+        transform.transform(point, dest);
         return dest;
     }
-    
-    public Point2D.Double pixelToNumeric(Point2D.Double point){
-        Point2D.Double dest = new Point2D.Double(0,0);
+
+    public Point2D.Double pixelToNumeric(Point2D.Double point) {
+        Point2D.Double dest = new Point2D.Double(0, 0);
         try {
-            transform.inverseTransform(point,dest);
+            transform.inverseTransform(point, dest);
         } catch (NoninvertibleTransformException ex) {
             Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -360,12 +393,12 @@ public class GraphCanvas extends javax.swing.JPanel {
     public void setDrawaftertransform(ArrayList<DrawableAfterTransform> drawaftertransform) {
         this.drawaftertransform = drawaftertransform;
     }
-    
-    public void removeDrawbeforetransformObject(DrawableBeforeTransform drawobject){
+
+    public void removeDrawbeforetransformObject(DrawableBeforeTransform drawobject) {
         this.drawbeforetransform.remove(drawobject);
     }
-    
-    public void removeDrawaftertransformObject(DrawableAfterTransform drawobject){
+
+    public void removeDrawaftertransformObject(DrawableAfterTransform drawobject) {
         this.drawaftertransform.remove(drawobject);
     }
 

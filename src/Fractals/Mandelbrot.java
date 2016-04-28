@@ -1,6 +1,5 @@
 package Fractals;
 
-import Drawables.DrawableAfterTransform;
 import Drawables.DrawableBeforeTransform;
 import funwidthgraphs.GraphCanvas;
 import java.awt.Color;
@@ -15,7 +14,7 @@ public class Mandelbrot implements DrawableBeforeTransform {
     int maxiterations = bastiterations;
     int maxscale = 5;
 
-    Gradient defaultgradient = (value, max) -> {
+    Gradient redtoblue = (value, max) -> {
         if (value == max) {
             return Color.BLACK;
         }
@@ -24,6 +23,23 @@ public class Mandelbrot implements DrawableBeforeTransform {
 
     };
 
+    Gradient greentoblue = (value, max) -> {
+        if (value == max) {
+            return Color.BLACK;
+        }
+
+        return new Color(0, value / max, 1-value / max, value / max);
+
+    };
+    
+    Gradient bluetored = (value, max) -> {
+        if (value == max) {
+            return Color.BLACK;
+        }
+
+        return new Color(1-value/max, 0, value / max, value / max);
+
+    };
     Gradient blackandwhite = (value, max) -> new Color(0, 0, 0, value / max);
 
     @Override
@@ -38,7 +54,7 @@ public class Mandelbrot implements DrawableBeforeTransform {
                 if (value == -1) {
                     g2d.setColor(Color.red);
                 } else {
-                    g2d.setColor(defaultgradient.getColor(value, maxiterations));
+                    g2d.setColor(redtoblue.getColor(value, maxiterations));
                 }
                 g2d.fillRect(x, y, resolution, resolution);
 //                g2d.fillOval(x, y, accuracy, accuracy);

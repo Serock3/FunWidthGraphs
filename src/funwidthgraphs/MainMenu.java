@@ -4,11 +4,11 @@ import Fractals.FractalWindow;
 import Integrals.IntegralWindow;
 
 public class MainMenu extends javax.swing.JFrame {
-    
+
     public MainMenu() {
         initComponents();
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -103,7 +103,7 @@ public class MainMenu extends javax.swing.JFrame {
         FractalWindow.main(null);
         dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
